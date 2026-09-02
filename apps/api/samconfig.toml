@@ -5,7 +5,7 @@ stack_name = "hub-hungara-api"
 region = "sa-east-1"
 
 [default.deploy.parameters]
-resolve_s3 = true
+s3_bucket = "hub-hungara-sam-artifacts-622703417827"
 s3_prefix = "hub-hungara-api"
 capabilities = "CAPABILITY_IAM"
 confirm_changeset = false

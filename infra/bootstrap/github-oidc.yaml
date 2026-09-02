@@ -27,6 +27,25 @@ Parameters:
     Default: 5
 
 Resources:
+  SamArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub hub-hungara-sam-artifacts-${AWS::AccountId}
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      LifecycleConfiguration:
+        Rules:
+          - Id: apagar-artefatos-antigos
+            Status: Enabled
+            ExpirationInDays: 30
+
   GitHubOidcProvider:
     Type: AWS::IAM::OIDCProvider
     Properties:
@@ -69,8 +88,12 @@ Resources:
                   - !Sub arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
               - Sid: ArtefatosSam
                 Effect: Allow
-                Action: [s3:CreateBucket, s3:PutObject, s3:GetObject, s3:ListBucket, s3:GetBucketLocation, s3:PutBucketPolicy, s3:GetBucketPolicy, s3:PutEncryptionConfiguration, s3:PutBucketVersioning, s3:PutBucketPublicAccessBlock, s3:GetEncryptionConfiguration]
-                Resource: ["arn:aws:s3:::aws-sam-cli-managed-default*", "arn:aws:s3:::aws-sam-cli-managed-default*/*"]
+                Action: [s3:PutObject, s3:GetObject, s3:ListBucket, s3:GetBucketLocation]
+                Resource: [!GetAtt SamArtifactsBucket.Arn, !Sub "${SamArtifactsBucket.Arn}/*"]
+              - Sid: CloudFormationLeitura
+                Effect: Allow
+                Action: [cloudformation:GetTemplateSummary, cloudformation:ValidateTemplate, cloudformation:ListStacks]
+                Resource: "*"
               - Sid: RecursosDaStack
                 Effect: Allow
                 Action:
@@ -124,6 +147,9 @@ Resources:
               Address: !Ref AlertEmail
 
 Outputs:
+  SamArtifactsBucketName:
+    Description: Bucket dos pacotes do sam deploy (apps/api/samconfig.toml)
+    Value: !Ref SamArtifactsBucket
   DeployRoleArn:
     Description: Cole em Settings > Secrets > Actions como AWS_ROLE_ARN
     Value: !GetAtt DeployRole.Arn
