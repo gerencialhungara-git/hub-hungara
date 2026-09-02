@@ -113,6 +113,10 @@ Resources:
                   - acm:DescribeCertificate
                   - acm:ListCertificates
                 Resource: "*"
+              - Sid: ServiceLinkedRoleApiGateway
+                Effect: Allow
+                Action: iam:CreateServiceLinkedRole
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/ops.apigateway.amazonaws.com/*
               - Sid: RolesDaLambdaEDoScheduler
                 Effect: Allow
                 Action: [iam:CreateRole, iam:DeleteRole, iam:GetRole, iam:PassRole, iam:AttachRolePolicy, iam:DetachRolePolicy, iam:PutRolePolicy, iam:DeleteRolePolicy, iam:GetRolePolicy, iam:TagRole, iam:UntagRole, iam:UpdateAssumeRolePolicy]
