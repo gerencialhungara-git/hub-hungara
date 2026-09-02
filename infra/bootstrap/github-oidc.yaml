@@ -11,6 +11,14 @@ Parameters:
   GitHubRepo:
     Type: String
     Default: hub-hungara
+  GitHubOrgId:
+    Type: String
+    Default: "272624545"
+    Description: ID numerico da organizacao (o GitHub inclui no token como org@id)
+  GitHubRepoId:
+    Type: String
+    Default: "1354148303"
+    Description: ID numerico do repositorio (repo@id)
   AlertEmail:
     Type: String
     Default: gerencial.hungara@gmail.com
@@ -42,9 +50,12 @@ Resources:
               StringEquals:
                 token.actions.githubusercontent.com:aud: sts.amazonaws.com
               StringLike:
+                # O GitHub emite o sub com IDs (org@id/repo@id). Aceitamos esse formato e o antigo, sem IDs.
                 token.actions.githubusercontent.com:sub:
                   - !Sub repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main
                   - !Sub repo:${GitHubOrg}/${GitHubRepo}:environment:producao
+                  - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@${GitHubRepoId}:ref:refs/heads/main
+                  - !Sub repo:${GitHubOrg}@${GitHubOrgId}/${GitHubRepo}@${GitHubRepoId}:environment:producao
       Policies:
         - PolicyName: sam-deploy-hub-hungara
           PolicyDocument:

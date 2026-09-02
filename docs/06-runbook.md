@@ -34,3 +34,12 @@
 1. `pg_dump` do banco do Supabase; `pg_restore` no destino (RDS Postgres, Neon, etc.).
 2. Trocar `DATABASE_URL` e `DATABASE_URL_MIGRATE` nos secrets do GitHub.
 3. Rodar o deploy da API. Nada no código muda: não existe biblioteca do Supabase no projeto.
+
+## Deploy falha em "Assuming role with OIDC: Not authorized"
+
+O GitHub inclui os IDs numéricos da organização e do repositório no token
+(`repo:gerencialhungara-git@272624545/hub-hungara@1354148303:environment:producao`). A política de
+confiança da role `hub-hungara-deploy` aceita esse formato e o antigo. Se o repositório for recriado
+ou movido, os IDs mudam: descubra o `sub` real no CloudTrail (evento `AssumeRoleWithWebIdentity`,
+campo `userIdentity.userName`), atualize `GitHubOrgId`/`GitHubRepoId` em
+`infra/bootstrap/github-oidc.yaml` e rode `./infra/bootstrap/bootstrap.sh` de novo.
