@@ -1,0 +1,32 @@
+name: Criar ou redefinir admin
+
+# Uso pontual: cria o primeiro admin (ou redefine a senha de um admin) direto no banco de produção.
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: E-mail do admin
+        required: true
+        default: gerencial.hungara@gmail.com
+      nome:
+        description: Nome completo
+        required: true
+        default: Administrador Hungara
+
+jobs:
+  create-admin:
+    runs-on: ubuntu-latest
+    environment: producao
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Criar admin (a senha temporária aparece no log deste job; apague o log depois)
+        run: npx tsx scripts/create-admin.ts "${{ inputs.email }}" "${{ inputs.nome }}"
+        working-directory: apps/api
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}

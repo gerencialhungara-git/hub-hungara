@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Hub Hungara</title>
+<meta name="description" content="Como funciona o Hub Hungara, explicado para todo mundo." />
+<style>
+  @font-face { font-family: "Ayr Blufy"; src: url(data:font/ttf;base64,__FONT_AYR__) format("truetype"); font-weight: 900; font-display: swap; }
+  @font-face { font-family: "Omnes SemiCond"; src: url(data:font/ttf;base64,__FONT_OMNES__) format("truetype"); font-weight: 600; font-display: swap; }
+  :root {
+    --red: #DD2321; --red-dark: #B81C1A; --brown: #553125; --brown-soft: #7A5546;
+    --cream: #FFF5E1; --cream-2: #FFEFE1; --cream-3: #F6E6CC;
+    --orange: #DD7B21; --orange-2: #F1662A; --yellow: #F7BD28;
+    --green: #57B55C; --green-dark: #2F6431; --blue: #21BBDD; --blue-2: #2CA8F6; --purple: #734677; --pink: #ED5494;
+    --display: "Ayr Blufy", "Nunito", system-ui, sans-serif;
+    --label: "Omnes SemiCond", "Nunito", system-ui, sans-serif;
+    --body: "Nunito", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light; }
+  body { margin: 0; background: var(--cream); color: var(--brown); font-family: var(--body); font-size: 17px; line-height: 1.6; }
+  header { background: var(--red); color: var(--cream); padding: 56px 24px 64px; text-align: center; }
+  header .logo { width: 150px; height: auto; filter: drop-shadow(0 8px 24px rgba(0,0,0,.25)); }
+  header h1 { font-family: var(--display); font-weight: 900; font-size: clamp(40px, 7vw, 72px); margin: 16px 0 8px; letter-spacing: .01em; }
+  header p { max-width: 640px; margin: 0 auto; font-size: 20px; opacity: .95; }
+  .kicker { font-family: var(--label); text-transform: uppercase; letter-spacing: .14em; font-size: 13px; color: var(--orange-2); }
+  main { max-width: 960px; margin: -32px auto 0; padding: 0 20px 80px; }
+  section { background: #fff; border-radius: 28px; padding: 40px 36px; margin-bottom: 28px; box-shadow: 0 10px 40px -24px rgba(85,49,37,.45); }
+  section h2 { font-family: var(--display); font-weight: 900; color: var(--red); font-size: 34px; margin: 4px 0 8px; line-height: 1.1; }
+  section h3 { font-family: var(--display); font-weight: 900; color: var(--brown); font-size: 22px; margin: 28px 0 6px; }
+  p.lead { font-size: 19px; color: var(--brown-soft); margin-top: 0; }
+  figure { margin: 28px 0 8px; background: var(--cream); border-radius: 20px; padding: 20px; }
+  figure svg { display: block; width: 100%; height: auto; }
+  figcaption { font-family: var(--label); text-transform: uppercase; letter-spacing: .1em; font-size: 12px; color: var(--brown-soft); text-align: center; margin-top: 12px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 20px; }
+  .card { background: var(--cream-2); border-radius: 18px; padding: 18px 20px; }
+  .card b { font-family: var(--label); text-transform: uppercase; letter-spacing: .08em; font-size: 13px; display: block; margin-bottom: 6px; }
+  .card.red b { color: var(--red); } .card.orange b { color: var(--orange); } .card.green b { color: var(--green-dark); } .card.blue b { color: #0e7a92; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; font-size: 16px; }
+  th { font-family: var(--label); text-transform: uppercase; letter-spacing: .08em; font-size: 12px; text-align: left; padding: 10px 12px; border-bottom: 3px solid var(--red); background: var(--cream-2); }
+  td { padding: 12px; border-bottom: 1px solid var(--cream-3); vertical-align: top; }
+  td:first-child { font-weight: 700; }
+  .dot { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: middle; }
+  .steps { counter-reset: s; list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 12px; }
+  .steps li { position: relative; padding: 14px 16px 14px 64px; background: var(--cream-2); border-radius: 16px; }
+  .steps li::before { counter-increment: s; content: counter(s); position: absolute; left: 14px; top: 12px; width: 36px; height: 36px; border-radius: 50%; background: var(--red); color: var(--cream); font-family: var(--display); font-weight: 900; display: grid; place-items: center; font-size: 18px; }
+  .steps li b { display: block; font-family: var(--label); text-transform: uppercase; letter-spacing: .06em; font-size: 13px; color: var(--red); }
+  .note { border-left: 6px solid var(--yellow); background: rgba(247,189,40,.12); padding: 12px 18px; border-radius: 0 14px 14px 0; margin-top: 20px; }
+  footer { text-align: center; padding: 24px; font-family: var(--label); text-transform: uppercase; letter-spacing: .12em; font-size: 12px; color: var(--brown-soft); }
+  .svg-label { font-family: var(--label); font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
+  .svg-title { font-family: var(--display); font-weight: 900; }
+  .svg-body { font-family: var(--body); font-size: 13px; }
+  @media (max-width: 640px) { section { padding: 28px 20px; border-radius: 22px; } section h2 { font-size: 28px; } body { font-size: 16px; } }
+  @media print { header { padding: 32px; } section { box-shadow: none; break-inside: avoid; } }
+</style>
+</head>
+<body>
+<header>
+  <svg class="logo" viewBox="0 0 120 120" aria-hidden="true"><circle cx="60" cy="60" r="56" fill="#FFF5E1"/><circle cx="60" cy="60" r="44" fill="#DD2321"/><path d="M44 36h8v18h16V36h8v48h-8V62H52v22h-8z" fill="#FFF5E1"/></svg>
+  <div class="kicker" style="color:#FFF5E1;opacity:.85">Hungara Lanches · desde 1983</div>
+  <h1>Como funciona o Hub</h1>
+  <p>Um lugar só, com uma senha só, onde cada pessoa vê exatamente as ferramentas que precisa. Sem caô.</p>
+</header>
+
+<main>
+  <!-- 1. O QUE É -->
+  <section>
+    <div class="kicker">Figura 1</div>
+    <h2>Uma porta, várias prateleiras</h2>
+    <p class="lead">Pense numa despensa organizada: todo mundo entra pela mesma porta, mas cada um enxerga só as prateleiras que lhe cabem.</p>
+    <figure>
+      <svg viewBox="0 0 900 380" role="img" aria-label="Pessoas de perfis diferentes entram por uma porta com login e veem prateleiras diferentes">
+        <!-- pessoas -->
+        <g class="svg-body" fill="#553125" text-anchor="middle">
+          <g><circle cx="70" cy="90" r="22" fill="#DD2321"/><rect x="48" y="118" width="44" height="60" rx="14" fill="#DD2321"/><text x="70" y="205">Diretoria</text></g>
+          <g><circle cx="70" cy="240" r="22" fill="#DD7B21"/><rect x="48" y="268" width="44" height="60" rx="14" fill="#DD7B21"/><text x="70" y="355">Escritório</text></g>
+          <g><circle cx="170" cy="90" r="22" fill="#57B55C"/><rect x="148" y="118" width="44" height="60" rx="14" fill="#57B55C"/><text x="170" y="205">Franqueado</text></g>
+          <g><circle cx="170" cy="240" r="22" fill="#2CA8F6"/><rect x="148" y="268" width="44" height="60" rx="14" fill="#2CA8F6"/><text x="170" y="355">Fábrica</text></g>
+        </g>
+        <!-- setas -->
+        <g stroke="#553125" stroke-width="3" fill="none" stroke-linecap="round">
+          <path d="M215 140 C 260 140, 270 190, 320 190"/>
+          <path d="M215 290 C 260 290, 270 200, 320 195"/>
+        </g>
+        <!-- porta -->
+        <rect x="325" y="95" width="120" height="200" rx="16" fill="#553125"/>
+        <rect x="340" y="110" width="90" height="170" rx="10" fill="#DD2321"/>
+        <circle cx="415" cy="200" r="7" fill="#F7BD28"/>
+        <rect x="355" y="130" width="60" height="26" rx="8" fill="#FFF5E1"/>
+        <text x="385" y="148" class="svg-label" font-size="11" fill="#DD2321" text-anchor="middle">LOGIN</text>
+        <text x="385" y="325" class="svg-title" font-size="18" fill="#553125" text-anchor="middle">Hub</text>
+        <!-- seta para prateleiras -->
+        <path d="M450 195 L 500 195" stroke="#553125" stroke-width="3" fill="none" marker-end="url(#a)"/>
+        <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#553125"/></marker></defs>
+        <!-- prateleiras -->
+        <g>
+          <rect x="520" y="70" width="350" height="14" rx="7" fill="#553125"/>
+          <rect x="520" y="170" width="350" height="14" rx="7" fill="#553125"/>
+          <rect x="520" y="270" width="350" height="14" rx="7" fill="#553125"/>
+          <!-- caixas -->
+          <g class="svg-label" font-size="11" fill="#FFF5E1" text-anchor="middle">
+            <rect x="535" y="22" width="100" height="46" rx="10" fill="#DD2321"/><text x="585" y="50">Painel TV</text>
+            <rect x="650" y="22" width="100" height="46" rx="10" fill="#DD7B21"/><text x="700" y="50">Royalties</text>
+            <rect x="765" y="22" width="95" height="46" rx="10" fill="#734677"/><text x="812" y="50">Metas</text>
+            <rect x="535" y="122" width="100" height="46" rx="10" fill="#57B55C"/><text x="585" y="150">Checklists</text>
+            <rect x="650" y="122" width="100" height="46" rx="10" fill="#2CA8F6"/><text x="700" y="150">Logística</text>
+            <rect x="765" y="122" width="95" height="46" rx="10" fill="#ED5494"/><text x="812" y="150">Marketing</text>
+            <rect x="535" y="222" width="100" height="46" rx="10" fill="#F7BD28"/><text x="585" y="250" fill="#553125">Docs</text>
+            <rect x="650" y="222" width="100" height="46" rx="10" fill="#21BBDD"/><text x="700" y="250">Estoque</text>
+            <rect x="765" y="222" width="95" height="46" rx="10" fill="#F6E6CC" stroke="#553125" stroke-dasharray="5 4"/><text x="812" y="250" fill="#553125">próximo…</text>
+          </g>
+          <text x="695" y="330" class="svg-body" fill="#7A5546" text-anchor="middle">cada perfil vê só as caixas liberadas para ele</text>
+        </g>
+      </svg>
+      <figcaption>Todo mundo entra pela mesma porta. O que muda é o que aparece depois dela.</figcaption>
+    </figure>
+    <div class="grid">
+      <div class="card red"><b>Página interna</b>Uma tela feita dentro do Hub, pelo nosso time. Ex.: relatório de royalties.</div>
+      <div class="card orange"><b>Link externo</b>Abre outro site em nova aba. Ex.: o painel de TV das lojas.</div>
+      <div class="card blue"><b>Embutido</b>Mostra outro site dentro de um quadro do Hub. Ex.: uma planilha publicada.</div>
+    </div>
+  </section>
+
+  <!-- 2. POR DENTRO -->
+  <section>
+    <div class="kicker">Figura 2</div>
+    <h2>Por dentro: vitrine, cérebro e arquivo</h2>
+    <p class="lead">O Hub são três peças que conversam entre si. Cada uma custa quase nada e cresce sozinha se a rede crescer.</p>
+    <figure>
+      <svg viewBox="0 0 900 400" role="img" aria-label="Três caixas: vitrine, cérebro e arquivo, ligadas por setas, mais o GitHub publicando automaticamente">
+        <defs><marker id="b" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#553125"/></marker></defs>
+        <!-- usuário -->
+        <g class="svg-body" fill="#553125" text-anchor="middle">
+          <circle cx="70" cy="150" r="22" fill="#DD2321"/><rect x="48" y="178" width="44" height="60" rx="14" fill="#DD2321"/>
+          <text x="70" y="265">você</text>
+          <rect x="30" y="60" width="80" height="50" rx="8" fill="#553125"/><rect x="36" y="66" width="68" height="34" rx="4" fill="#FFF5E1"/>
+          <text x="70" y="90" font-size="11">navegador</text>
+        </g>
+        <!-- vitrine -->
+        <g>
+          <rect x="190" y="40" width="200" height="130" rx="20" fill="#DD2321"/>
+          <text x="290" y="82" class="svg-title" font-size="24" fill="#FFF5E1" text-anchor="middle">Vitrine</text>
+          <text x="290" y="108" class="svg-body" fill="#FFF5E1" text-anchor="middle">o site que você abre</text>
+          <text x="290" y="128" class="svg-label" font-size="10" fill="#FFF5E1" opacity=".85" text-anchor="middle">hub.hungaralanches.com.br</text>
+          <text x="290" y="150" class="svg-label" font-size="10" fill="#FFF5E1" opacity=".85" text-anchor="middle">AWS Amplify</text>
+        </g>
+        <!-- cérebro -->
+        <g>
+          <rect x="190" y="220" width="200" height="130" rx="20" fill="#553125"/>
+          <text x="290" y="262" class="svg-title" font-size="24" fill="#FFF5E1" text-anchor="middle">Cérebro</text>
+          <text x="290" y="288" class="svg-body" fill="#FFF5E1" text-anchor="middle">confere quem é e o que pode</text>
+          <text x="290" y="308" class="svg-label" font-size="10" fill="#FFF5E1" opacity=".85" text-anchor="middle">api.hub.hungaralanches.com.br</text>
+          <text x="290" y="330" class="svg-label" font-size="10" fill="#FFF5E1" opacity=".85" text-anchor="middle">AWS Lambda</text>
+        </g>
+        <!-- arquivo -->
+        <g>
+          <path d="M520 240 a90 22 0 0 1 180 0 v90 a90 22 0 0 1 -180 0 z" fill="#DD7B21"/>
+          <ellipse cx="610" cy="240" rx="90" ry="22" fill="#F1662A"/>
+          <text x="610" y="292" class="svg-title" font-size="24" fill="#FFF5E1" text-anchor="middle">Arquivo</text>
+          <text x="610" y="316" class="svg-body" fill="#FFF5E1" text-anchor="middle">usuários, módulos, permissões</text>
+          <text x="610" y="340" class="svg-label" font-size="10" fill="#FFF5E1" text-anchor="middle">Postgres (Supabase)</text>
+        </g>
+        <!-- github -->
+        <g>
+          <rect x="520" y="40" width="180" height="90" rx="20" fill="#FFF5E1" stroke="#553125" stroke-width="3"/>
+          <text x="610" y="76" class="svg-title" font-size="20" fill="#553125" text-anchor="middle">GitHub</text>
+          <text x="610" y="100" class="svg-body" fill="#7A5546" text-anchor="middle">onde o código mora</text>
+          <text x="610" y="118" class="svg-body" font-size="11" fill="#7A5546" text-anchor="middle">salvou → publicou sozinho</text>
+        </g>
+        <!-- setas -->
+        <g stroke="#553125" stroke-width="3" fill="none" marker-end="url(#b)">
+          <path d="M115 130 L 185 110"/>
+          <path d="M115 210 L 185 270"/>
+          <path d="M395 285 L 515 285"/>
+        </g>
+        <g stroke="#7A5546" stroke-width="3" fill="none" stroke-dasharray="7 6" marker-end="url(#b)">
+          <path d="M515 85 L 395 95"/>
+          <path d="M560 135 C 520 190, 450 200, 395 240"/>
+        </g>
+        <g class="svg-body" font-size="12" fill="#7A5546">
+          <text x="120" y="100">abre o site</text>
+          <text x="105" y="250">pede dados</text>
+          <text x="420" y="275">guarda e busca</text>
+          <text x="410" y="70">publica o site</text>
+          <text x="470" y="215">publica o cérebro</text>
+        </g>
+        <!-- conta AWS -->
+        <rect x="170" y="20" width="240" height="350" rx="26" fill="none" stroke="#F7BD28" stroke-width="3" stroke-dasharray="10 8"/>
+        <text x="290" y="392" class="svg-label" font-size="11" fill="#7A5546" text-anchor="middle">conta AWS da Hungara</text>
+      </svg>
+      <figcaption>Só o cérebro fala com o arquivo. Ninguém acessa o banco de dados direto.</figcaption>
+    </figure>
+    <div class="grid">
+      <div class="card red"><b>Vitrine</b>É o site. Hospedado na AWS (Amplify). Quando o time salva código novo no GitHub, o site atualiza sozinho em uns 3 minutos.</div>
+      <div class="card"><b style="color:#553125">Cérebro</b>Uma função na nuvem que só "acorda" quando alguém usa o Hub. Confere a senha, decide o que a pessoa pode ver, grava tudo que importa.</div>
+      <div class="card orange"><b>Arquivo</b>Banco de dados Postgres, gratuito no Supabase. Guarda usuários, módulos e permissões. Se um dia mudarmos de fornecedor, é copiar e colar.</div>
+    </div>
+  </section>
+
+  <!-- 3. QUEM VÊ O QUÊ -->
+  <section>
+    <div class="kicker">Figura 3</div>
+    <h2>Quem vê o quê</h2>
+    <p class="lead">O administrador marca, para cada implementação, quais perfis podem ver. Diretoria e administradores veem tudo. Dá para abrir exceção para uma pessoa específica.</p>
+    <figure>
+      <svg viewBox="0 0 900 360" role="img" aria-label="Matriz de perfis por implementações com bolinhas indicando quem vê">
+        <g class="svg-label" font-size="12" fill="#553125">
+          <text x="300" y="40" text-anchor="middle">Painel TV</text>
+          <text x="420" y="40" text-anchor="middle">Royalties</text>
+          <text x="540" y="40" text-anchor="middle">Logística</text>
+          <text x="660" y="40" text-anchor="middle">Checklists</text>
+          <text x="780" y="40" text-anchor="middle">Docs</text>
+        </g>
+        <g class="svg-body" font-size="15" fill="#553125" font-weight="700">
+          <text x="30" y="95">Administrador</text>
+          <text x="30" y="150">Diretoria</text>
+          <text x="30" y="205">Escritório</text>
+          <text x="30" y="260">Franqueado</text>
+          <text x="30" y="315">Fábrica</text>
+        </g>
+        <g stroke="#F6E6CC" stroke-width="2">
+          <line x1="20" y1="115" x2="880" y2="115"/><line x1="20" y1="170" x2="880" y2="170"/><line x1="20" y1="225" x2="880" y2="225"/><line x1="20" y1="280" x2="880" y2="280"/>
+        </g>
+        <!-- linhas: admin e diretoria tudo -->
+        <g fill="#DD2321">
+          <circle cx="300" cy="90" r="13"/><circle cx="420" cy="90" r="13"/><circle cx="540" cy="90" r="13"/><circle cx="660" cy="90" r="13"/><circle cx="780" cy="90" r="13"/>
+          <circle cx="300" cy="145" r="13"/><circle cx="420" cy="145" r="13"/><circle cx="540" cy="145" r="13"/><circle cx="660" cy="145" r="13"/><circle cx="780" cy="145" r="13"/>
+        </g>
+        <!-- escritório -->
+        <g fill="#DD7B21"><circle cx="300" cy="200" r="13"/><circle cx="420" cy="200" r="13"/><circle cx="780" cy="200" r="13"/></g>
+        <!-- franqueado -->
+        <g fill="#57B55C"><circle cx="660" cy="255" r="13"/><circle cx="780" cy="255" r="13"/></g>
+        <!-- exceção -->
+        <g><circle cx="420" cy="255" r="13" fill="#FFF5E1" stroke="#2CA8F6" stroke-width="3"/><text x="420" y="260" class="svg-label" font-size="12" fill="#2CA8F6" text-anchor="middle">+</text></g>
+        <!-- fábrica -->
+        <g fill="#2CA8F6"><circle cx="540" cy="310" r="13"/><circle cx="780" cy="310" r="13"/></g>
+        <!-- vazios -->
+        <g fill="none" stroke="#F6E6CC" stroke-width="2">
+          <circle cx="540" cy="200" r="13"/><circle cx="660" cy="200" r="13"/>
+          <circle cx="300" cy="255" r="13"/><circle cx="540" cy="255" r="13"/>
+          <circle cx="300" cy="310" r="13"/><circle cx="420" cy="310" r="13"/><circle cx="660" cy="310" r="13"/>
+        </g>
+        <text x="450" y="350" class="svg-body" font-size="12" fill="#7A5546" text-anchor="middle">exemplo ilustrativo · o círculo azul com “+” é uma exceção: um franqueado específico liberado para ver Royalties</text>
+      </svg>
+      <figcaption>Bolinha cheia = vê. Vazia = não aparece. A regra vale para o card e para os dados por trás dele.</figcaption>
+    </figure>
+    <table>
+      <thead><tr><th>Perfil</th><th>Quem</th><th>Vê</th></tr></thead>
+      <tbody>
+        <tr><td><span class="dot" style="background:var(--red)"></span> Administrador</td><td>TI e estagiário de processos</td><td>Tudo. E gerencia usuários e implementações.</td></tr>
+        <tr><td><span class="dot" style="background:var(--red)"></span> Diretoria</td><td>Dono e CEO</td><td>Todas as implementações ativas.</td></tr>
+        <tr><td><span class="dot" style="background:var(--orange)"></span> Escritório</td><td>Equipe administrativa</td><td>O que for liberado para o escritório.</td></tr>
+        <tr><td><span class="dot" style="background:var(--green)"></span> Franqueado</td><td>Donos de franquia</td><td>O que for liberado para franqueados.</td></tr>
+        <tr><td><span class="dot" style="background:var(--blue-2)"></span> Fábrica / Logística</td><td>Equipe da fábrica</td><td>O que for liberado para a fábrica.</td></tr>
+      </tbody>
+    </table>
+    <div class="note"><b>E a senha?</b> O administrador cria o usuário com uma senha temporária e passa pessoalmente ou por WhatsApp. Na primeira entrada, a pessoa escolhe uma senha só dela. Esqueceu? Pede ao administrador, que gera outra. Ninguém, nem o administrador, consegue ler a senha de alguém: ela é guardada embaralhada.</div>
+  </section>
+
+  <!-- 4. NOVA IMPLEMENTAÇÃO -->
+  <section>
+    <div class="kicker">Figura 4</div>
+    <h2>Como uma implementação nova entra</h2>
+    <p class="lead">Cinco passos. Os dois primeiros são de quem programa; o quarto acontece sozinho; o último é um clique no painel do administrador.</p>
+    <figure>
+      <svg viewBox="0 0 900 240" role="img" aria-label="Cinco passos: fazer, registrar, enviar, publicar sozinho, liberar">
+        <defs><marker id="c" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#553125"/></marker></defs>
+        <g stroke="#553125" stroke-width="3" fill="none" marker-end="url(#c)">
+          <path d="M165 110 L 195 110"/><path d="M340 110 L 370 110"/><path d="M515 110 L 545 110"/><path d="M690 110 L 720 110"/>
+        </g>
+        <g class="svg-title" font-size="17" fill="#FFF5E1" text-anchor="middle">
+          <g><rect x="20" y="60" width="145" height="100" rx="18" fill="#DD2321"/><text x="92" y="98">1. Fazer</text><text x="92" y="126" class="svg-body" font-size="12">copiar o exemplo</text><text x="92" y="144" class="svg-body" font-size="12">e escrever a tela</text></g>
+          <g><rect x="195" y="60" width="145" height="100" rx="18" fill="#DD7B21"/><text x="267" y="98">2. Registrar</text><text x="267" y="126" class="svg-body" font-size="12">uma linha no</text><text x="267" y="144" class="svg-body" font-size="12">registry.ts</text></g>
+          <g><rect x="370" y="60" width="145" height="100" rx="18" fill="#553125"/><text x="442" y="98">3. Enviar</text><text x="442" y="126" class="svg-body" font-size="12">pull request,</text><text x="442" y="144" class="svg-body" font-size="12">revisão, merge</text></g>
+          <g><rect x="545" y="60" width="145" height="100" rx="18" fill="#57B55C"/><text x="617" y="98">4. Publicar</text><text x="617" y="126" class="svg-body" font-size="12">automático:</text><text x="617" y="144" class="svg-body" font-size="12">site + cérebro</text></g>
+          <g><rect x="720" y="60" width="160" height="100" rx="18" fill="#2CA8F6"/><text x="800" y="98">5. Liberar</text><text x="800" y="126" class="svg-body" font-size="12">Admin marca</text><text x="800" y="144" class="svg-body" font-size="12">os perfis</text></g>
+        </g>
+        <g class="svg-label" font-size="11" fill="#7A5546" text-anchor="middle">
+          <text x="92" y="190">quem programa</text><text x="267" y="190">quem programa</text><text x="442" y="190">time revisa</text><text x="617" y="190">robô (GitHub + AWS)</text><text x="800" y="190">administrador</text>
+        </g>
+        <rect x="20" y="205" width="495" height="6" rx="3" fill="#F6E6CC"/><rect x="545" y="205" width="145" height="6" rx="3" fill="#57B55C"/><rect x="720" y="205" width="160" height="6" rx="3" fill="#2CA8F6"/>
+        <text x="267" y="232" class="svg-body" font-size="12" fill="#7A5546" text-anchor="middle">código no repositório</text>
+        <text x="617" y="232" class="svg-body" font-size="12" fill="#7A5546" text-anchor="middle">~3 minutos</text>
+        <text x="800" y="232" class="svg-body" font-size="12" fill="#7A5546" text-anchor="middle">aparece na hora</text>
+      </svg>
+      <figcaption>Um link para um site que já existe pula direto para o passo 5. Zero código.</figcaption>
+    </figure>
+    <ol class="steps">
+      <li><b>Fazer</b>Copiar a pasta de exemplo (<code>exemplo-boas-vindas</code>) com um nome novo e escrever a tela.</li>
+      <li><b>Registrar</b>Acrescentar uma linha no arquivo <code>registry.ts</code> dizendo “esse nome abre essa pasta”.</li>
+      <li><b>Enviar</b>Abrir um pull request no GitHub. O robô roda os testes; alguém do time revisa e aprova.</li>
+      <li><b>Publicar</b>Sozinho. O Amplify atualiza o site e o GitHub Actions atualiza o cérebro. Ninguém digita comando nenhum.</li>
+      <li><b>Liberar</b>No Hub, em <em>Implementações</em>, o administrador escolhe o nome, um ícone, uma categoria e marca os perfis. Pronto.</li>
+    </ol>
+    <div class="note"><b>Regra de ouro:</b> o cadastro (nome, ícone, quem vê) fica no banco, feito pelo administrador. O código fica no repositório. O <em>nome curto</em> (slug) é a cola entre os dois.</div>
+  </section>
+
+  <!-- 5. CUSTO E CRESCIMENTO -->
+  <section>
+    <div class="kicker">Figura 5</div>
+    <h2>Quanto custa e como cresce</h2>
+    <p class="lead">Quase nada. Tudo roda em planos gratuitos ou por uso, e nenhuma peça precisa de servidor ligado 24 horas.</p>
+    <figure>
+      <svg viewBox="0 0 900 220" role="img" aria-label="Barras de custo mensal muito baixas por peça e uma barra comparativa do painel de TV">
+        <g class="svg-body" font-size="14" fill="#553125">
+          <text x="30" y="52">Vitrine (Amplify)</text>
+          <text x="30" y="92">Cérebro (Lambda + API)</text>
+          <text x="30" y="132">Arquivo (Supabase)</text>
+          <text x="30" y="172">Logs e alarmes</text>
+        </g>
+        <g>
+          <rect x="260" y="38" width="40" height="20" rx="10" fill="#DD2321"/><text x="312" y="53" class="svg-body" font-size="13" fill="#7A5546">até US$ 1</text>
+          <rect x="260" y="78" width="8" height="20" rx="4" fill="#553125"/><text x="280" y="93" class="svg-body" font-size="13" fill="#7A5546">≈ US$ 0 (nível gratuito)</text>
+          <rect x="260" y="118" width="8" height="20" rx="4" fill="#DD7B21"/><text x="280" y="133" class="svg-body" font-size="13" fill="#7A5546">US$ 0 (plano free)</text>
+          <rect x="260" y="158" width="20" height="20" rx="10" fill="#F7BD28"/><text x="292" y="173" class="svg-body" font-size="13" fill="#7A5546">até US$ 0,50</text>
+        </g>
+        <line x1="600" y1="30" x2="600" y2="190" stroke="#F6E6CC" stroke-width="2"/>
+        <g class="svg-body" font-size="14" fill="#553125">
+          <text x="620" y="52">Para comparar:</text>
+          <text x="620" y="92">Painel TV (servidor ligado)</text>
+          <rect x="620" y="108" width="240" height="20" rx="10" fill="#B26DD7"/><text x="620" y="150" class="svg-body" font-size="13" fill="#7A5546">≈ US$ 18 a 26 / mês</text>
+          <text x="620" y="185" class="svg-label" font-size="11" fill="#7A5546">Hub inteiro: menos de US$ 2 / mês</text>
+        </g>
+      </svg>
+      <figcaption>O Hub custa menos por mês do que um lanche. O alerta de gasto avisa por e-mail se passar de US$ 5.</figcaption>
+    </figure>
+    <h3>E se a rede dobrar de tamanho?</h3>
+    <p>Nada muda. A vitrine e o cérebro escalam sozinhos conforme o uso. O primeiro limite prático é o espaço do banco gratuito (500 MB), muito acima do que usuários, permissões e auditoria ocupam.</p>
+    <h3>E se quisermos trocar o banco?</h3>
+    <p>Copiamos os dados para o novo lugar e trocamos uma linha de configuração. O código não muda, porque só o cérebro fala com o banco e ele fala em SQL padrão.</p>
+    <h3>E se alguém sair da empresa?</h3>
+    <p>O administrador desativa o usuário. Na hora, qualquer sessão aberta dele para de funcionar. Tudo que ele fez fica registrado na auditoria.</p>
+  </section>
+
+  <section style="text-align:center">
+    <h2>Resumindo</h2>
+    <p class="lead" style="max-width:640px;margin:0 auto">Um site, um cérebro, um arquivo. Login único, cada perfil vê o seu. Código novo publica sozinho; liberar é um clique. Custa menos de US$ 2 por mês.</p>
+  </section>
+</main>
+<footer>Hub Hungara · documento vivo, atualizado com o projeto</footer>
+</body>
+</html>

@@ -1,0 +1,118 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  Bootstrap do Hub Hungara (rodar UMA vez com o perfil local `hungara`):
+  provedor OIDC do GitHub + role que o GitHub Actions assume para publicar a API,
+  e um Budget de alerta de custo.
+
+Parameters:
+  GitHubOrg:
+    Type: String
+    Default: gerencialhungara-git
+  GitHubRepo:
+    Type: String
+    Default: hub-hungara
+  AlertEmail:
+    Type: String
+    Default: gerencial.hungara@gmail.com
+  MonthlyBudgetUsd:
+    Type: Number
+    Default: 5
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+      ThumbprintList: [6938fd4d98bab03faadb97b34396831e3780aea1]
+
+  DeployRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: hub-hungara-deploy
+      Description: Assumida pelo GitHub Actions (repo hub-hungara, branch main) para sam deploy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !Ref GitHubOidcProvider
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  - !Sub repo:${GitHubOrg}/${GitHubRepo}:ref:refs/heads/main
+                  - !Sub repo:${GitHubOrg}/${GitHubRepo}:environment:producao
+      Policies:
+        - PolicyName: sam-deploy-hub-hungara
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudFormation
+                Effect: Allow
+                Action: cloudformation:*
+                Resource:
+                  - !Sub arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/hub-hungara-api/*
+                  - !Sub arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31
+              - Sid: ArtefatosSam
+                Effect: Allow
+                Action: [s3:CreateBucket, s3:PutObject, s3:GetObject, s3:ListBucket, s3:GetBucketLocation, s3:PutBucketPolicy, s3:GetBucketPolicy, s3:PutEncryptionConfiguration, s3:PutBucketVersioning, s3:PutBucketPublicAccessBlock, s3:GetEncryptionConfiguration]
+                Resource: ["arn:aws:s3:::aws-sam-cli-managed-default*", "arn:aws:s3:::aws-sam-cli-managed-default*/*"]
+              - Sid: RecursosDaStack
+                Effect: Allow
+                Action:
+                  - lambda:*
+                  - apigateway:*
+                  - logs:*
+                  - scheduler:*
+                  - cloudwatch:PutMetricAlarm
+                  - cloudwatch:DeleteAlarms
+                  - cloudwatch:DescribeAlarms
+                  - sns:CreateTopic
+                  - sns:DeleteTopic
+                  - sns:GetTopicAttributes
+                  - sns:SetTopicAttributes
+                  - sns:TagResource
+                  - sns:Subscribe
+                  - acm:DescribeCertificate
+                  - acm:ListCertificates
+                Resource: "*"
+              - Sid: RolesDaLambdaEDoScheduler
+                Effect: Allow
+                Action: [iam:CreateRole, iam:DeleteRole, iam:GetRole, iam:PassRole, iam:AttachRolePolicy, iam:DetachRolePolicy, iam:PutRolePolicy, iam:DeleteRolePolicy, iam:GetRolePolicy, iam:TagRole, iam:UntagRole, iam:UpdateAssumeRolePolicy]
+                Resource: !Sub arn:aws:iam::${AWS::AccountId}:role/hub-hungara-api-*
+
+  CostBudget:
+    Type: AWS::Budgets::Budget
+    Properties:
+      Budget:
+        BudgetName: hub-hungara
+        BudgetType: COST
+        TimeUnit: MONTHLY
+        BudgetLimit:
+          Amount: !Ref MonthlyBudgetUsd
+          Unit: USD
+      NotificationsWithSubscribers:
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 80
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref AlertEmail
+        - Notification:
+            NotificationType: ACTUAL
+            ComparisonOperator: GREATER_THAN
+            Threshold: 100
+            ThresholdType: PERCENTAGE
+          Subscribers:
+            - SubscriptionType: EMAIL
+              Address: !Ref AlertEmail
+
+Outputs:
+  DeployRoleArn:
+    Description: Cole em Settings > Secrets > Actions como AWS_ROLE_ARN
+    Value: !GetAtt DeployRole.Arn

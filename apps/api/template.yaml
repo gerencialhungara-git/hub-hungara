@@ -1,0 +1,151 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Hub Hungara - API (Lambda Hono + API Gateway HTTP API)
+
+Parameters:
+  DatabaseUrl:
+    Type: String
+    NoEcho: true
+    Description: Pooler do Supabase, porta 6543 (transaction mode)
+  JwtSecret:
+    Type: String
+    NoEcho: true
+    MinLength: 32
+  AllowedOrigins:
+    Type: String
+    Default: https://hub.hungaralanches.com.br
+    Description: Origens permitidas no CORS, separadas por virgula
+  CookieDomain:
+    Type: String
+    Default: hub.hungaralanches.com.br
+  ApiDomainName:
+    Type: String
+    Default: api.hub.hungaralanches.com.br
+  CertificateArn:
+    Type: String
+    Description: Certificado ACM (sa-east-1) para o dominio da API
+  AppVersion:
+    Type: String
+    Default: dev
+
+Globals:
+  Function:
+    Runtime: nodejs22.x
+    Architectures: [arm64]
+    MemorySize: 512
+    Timeout: 15
+
+Resources:
+  HubApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: $default
+      Domain:
+        DomainName: !Ref ApiDomainName
+        CertificateArn: !Ref CertificateArn
+        EndpointConfiguration: REGIONAL
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 100
+        ThrottlingRateLimit: 50
+      RouteSettings:
+        "POST /auth/login":
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 5
+        "POST /auth/refresh":
+          ThrottlingBurstLimit: 20
+          ThrottlingRateLimit: 10
+      AccessLogSettings:
+        DestinationArn: !GetAtt ApiAccessLogGroup.Arn
+        Format: '{"requestId":"$context.requestId","ip":"$context.identity.sourceIp","method":"$context.httpMethod","path":"$context.path","status":"$context.status","latency":"$context.responseLatency"}'
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: hub-hungara-api
+      CodeUri: dist/
+      Handler: index.handler
+      Description: API do Hub Hungara (auth propria, catalogo de modulos, admin)
+      Environment:
+        Variables:
+          NODE_ENV: production
+          DATABASE_URL: !Ref DatabaseUrl
+          JWT_SECRET: !Ref JwtSecret
+          ALLOWED_ORIGINS: !Ref AllowedOrigins
+          COOKIE_DOMAIN: !Ref CookieDomain
+          APP_VERSION: !Ref AppVersion
+      LoggingConfig:
+        LogGroup: !Ref ApiFunctionLogGroup
+      Events:
+        Login:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HubApi
+            Path: /auth/login
+            Method: POST
+        Refresh:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HubApi
+            Path: /auth/refresh
+            Method: POST
+        Proxy:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HubApi
+            Path: /{proxy+}
+            Method: ANY
+        Keepalive:
+          Type: ScheduleV2
+          Properties:
+            Name: hub-hungara-keepalive
+            Description: Ping no banco a cada 3 dias para o Supabase free nao pausar
+            ScheduleExpression: rate(3 days)
+            Input: '{"source":"hub.keepalive"}'
+
+  ApiFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/hub-hungara-api
+      RetentionInDays: 14
+
+  ApiAccessLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/apigateway/hub-hungara-api
+      RetentionInDays: 14
+
+  ErrorsAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: hub-hungara-api-errors
+      AlarmDescription: A API do Hub retornou erro nao tratado
+      Namespace: AWS/Lambda
+      MetricName: Errors
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref ApiFunction
+      Statistic: Sum
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      TreatMissingData: notBreaching
+      AlarmActions: [!Ref AlertsTopic]
+
+  AlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: hub-hungara-alertas
+
+Outputs:
+  ApiUrl:
+    Description: URL gerada pelo API Gateway (sem dominio custom)
+    Value: !Sub "https://${HubApi}.execute-api.${AWS::Region}.amazonaws.com"
+  ApiCustomDomain:
+    Value: !Sub "https://${ApiDomainName}"
+  ApiDomainTarget:
+    Description: Crie um CNAME <ApiDomainName> apontando para este valor no painel de DNS
+    Value: !GetAtt HubApi.DomainName.RegionalDomainName
+  AlertsTopicArn:
+    Description: Inscreva um e-mail neste topico para receber os alarmes
+    Value: !Ref AlertsTopic

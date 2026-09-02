@@ -1,0 +1,83 @@
+@import "tailwindcss";
+@import "@fontsource-variable/nunito";
+
+@font-face {
+  font-family: "Ayr Blufy";
+  src: url("/fonts/AyrBlufy-Black.ttf") format("truetype");
+  font-weight: 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Omnes SemiCond";
+  src: url("/fonts/OmnesSemiCond-SemiBold.ttf") format("truetype");
+  font-weight: 600;
+  font-display: swap;
+}
+
+@theme {
+  /* Paleta principal da Hungara */
+  --color-brand-red: #dd2321;
+  --color-brand-red-dark: #b81c1a;
+  --color-brand-brown: #553125;
+  --color-brand-brown-soft: #7a5546;
+  --color-brand-cream: #fff5e1;
+  --color-brand-cream-2: #ffefe1;
+  --color-brand-cream-3: #f6e6cc;
+  /* Apoio */
+  --color-brand-orange: #dd7b21;
+  --color-brand-orange-2: #f1662a;
+  --color-brand-yellow: #f7bd28;
+  --color-brand-yellow-2: #fdbf20;
+  --color-success: #57b55c;
+  --color-success-dark: #2f6431;
+  --color-info: #21bbdd;
+  --color-info-2: #2ca8f6;
+  --color-purple: #734677;
+  --color-purple-2: #b26dd7;
+  --color-pink: #ed5494;
+
+  --font-display: "Ayr Blufy", "Nunito Variable", system-ui, sans-serif;
+  --font-label: "Omnes SemiCond", "Nunito Variable", system-ui, sans-serif;
+  --font-sans: "Nunito Variable", system-ui, sans-serif;
+
+  --radius-card: 1.25rem;
+  --shadow-card: 0 6px 24px -12px rgb(85 49 37 / 0.35);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    @apply bg-brand-cream text-brand-brown font-sans antialiased;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-wide;
+  }
+  ::selection {
+    background: #dd2321;
+    color: #fff5e1;
+  }
+}
+
+@layer utilities {
+  .label {
+    @apply font-label uppercase tracking-wider text-xs;
+  }
+}
+
+/* Tipografia dos documentos Markdown (módulo Documentação) */
+.prose-hub { @apply text-[15px] leading-relaxed text-brand-brown; }
+.prose-hub h1 { @apply mb-4 text-3xl text-brand-red; }
+.prose-hub h2 { @apply mt-8 mb-3 text-2xl text-brand-brown; }
+.prose-hub h3 { @apply mt-6 mb-2 text-xl text-brand-brown; }
+.prose-hub p { @apply my-3; }
+.prose-hub ul { @apply my-3 list-disc pl-6; }
+.prose-hub ol { @apply my-3 list-decimal pl-6; }
+.prose-hub li { @apply my-1; }
+.prose-hub blockquote { @apply my-4 border-l-4 border-brand-yellow bg-brand-yellow/10 px-4 py-2 italic; }
+.prose-hub table { @apply my-4 w-full border-collapse text-sm; }
+.prose-hub th { @apply border-b-2 border-brand-red bg-brand-cream-2 px-3 py-2 text-left font-label uppercase tracking-wider text-xs text-brand-brown; }
+.prose-hub td { @apply border-b border-brand-cream-3 px-3 py-2 align-top; }
+.prose-hub hr { @apply my-8 border-brand-cream-3; }
+.prose-hub strong { @apply font-bold text-brand-brown; }

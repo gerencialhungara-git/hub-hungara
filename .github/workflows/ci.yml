@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  verificar:
+    name: Typecheck, lint e testes
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: hub
+          POSTGRES_PASSWORD: hub
+          POSTGRES_DB: hub
+        ports: ["5433:5432"]
+        options: >-
+          --health-cmd "pg_isready -U hub" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+        env:
+          TEST_DATABASE_BASE_URL: postgres://hub:hub@localhost:5433/hub
+      - name: Build do site (garante que o Amplify vai conseguir buildar)
+        run: npm run build -w apps/web
+        env:
+          VITE_API_URL: https://api.hub.hungaralanches.com.br
+      - name: Build e validação do template da API
+        run: |
+          npm run build -w apps/api
+          pip install --quiet aws-sam-cli
+          cd apps/api && sam validate --lint --region sa-east-1
