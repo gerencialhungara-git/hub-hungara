@@ -11,6 +11,7 @@ import { adminUsers } from "./routes/admin/users.js";
 import { auth } from "./routes/auth.js";
 import { health } from "./routes/health.js";
 import { me } from "./routes/me.js";
+import { logisticaDiaria } from "./routes/logistica-diaria.js";
 import { modulesRoutes } from "./routes/modules.js";
 
 export function createApp() {
@@ -32,6 +33,7 @@ export function createApp() {
   app.route("/auth", auth);
   app.route("/me", me);
   app.route("/modules", modulesRoutes);
+  app.route("/logistica-diaria", logisticaDiaria);
 
   const admin = new Hono<AuthVars>().use(requireAuth, requirePasswordChanged, requireRole("admin"));
   admin.route("/users", adminUsers);

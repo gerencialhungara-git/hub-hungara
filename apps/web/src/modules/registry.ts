@@ -11,6 +11,7 @@ type Loader = () => Promise<{ default: ComponentType<ModuleComponentProps> }>;
 export const internalModules: Record<string, Loader> = {
   "documentacao": () => import("./documentacao"),
   "exemplo-boas-vindas": () => import("./exemplo-boas-vindas"),
+  "logistica-diaria": () => import("./logistica-diaria"),
 };
 
 export const internalSlugs = Object.keys(internalModules).sort();

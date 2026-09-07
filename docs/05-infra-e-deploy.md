@@ -57,6 +57,8 @@
 | `ALLOWED_ORIGINS` | variable | CORS |
 | `COOKIE_DOMAIN` | variable | `hub.hungaralanches.com.br` (o cookie vale para `api.hub.` também) |
 | `APP_VERSION` | automático | SHA do commit, aparece em `/health` |
+| `LOGISTICA_URL` | Variable | Function URL da rotina de Logística (repositório `automacoes-hungara`) |
+| `LOGISTICA_API_KEY` | Secret | Chave dessa rotina em texto. **Opcionais de propósito**: sem elas a API sobe normal e só o módulo `logistica-diaria` avisa que falta configuração — um segredo esquecido não derruba o portal |
 
 ## Rodar local
 

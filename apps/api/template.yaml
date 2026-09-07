@@ -27,6 +27,15 @@ Parameters:
   AppVersion:
     Type: String
     Default: dev
+  LogisticaUrl:
+    Type: String
+    Default: ""
+    Description: Function URL da rotina de Logistica (automacoes-hungara)
+  LogisticaApiKey:
+    Type: String
+    NoEcho: true
+    Default: ""
+    Description: Chave da rotina de Logistica em texto - o Hub e cliente dela
 
 Globals:
   Function:
@@ -73,6 +82,8 @@ Resources:
           ALLOWED_ORIGINS: !Ref AllowedOrigins
           COOKIE_DOMAIN: !Ref CookieDomain
           APP_VERSION: !Ref AppVersion
+          LOGISTICA_URL: !Ref LogisticaUrl
+          LOGISTICA_API_KEY: !Ref LogisticaApiKey
       LoggingConfig:
         LogGroup: !Ref ApiFunctionLogGroup
       Events:

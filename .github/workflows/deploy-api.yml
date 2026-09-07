@@ -64,6 +64,8 @@ jobs:
               CookieDomain="${{ vars.COOKIE_DOMAIN }}" \
               ApiDomainName="${{ vars.API_DOMAIN_NAME }}" \
               CertificateArn="${{ secrets.ACM_CERT_ARN }}" \
+              LogisticaUrl="${{ vars.LOGISTICA_URL }}" \
+              LogisticaApiKey="${{ secrets.LOGISTICA_API_KEY }}" \
               AppVersion="${{ github.sha }}"
 
       - name: Smoke test

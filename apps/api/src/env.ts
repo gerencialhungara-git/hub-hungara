@@ -9,6 +9,18 @@ const EnvSchema = z.object({
   ACCESS_TOKEN_TTL_SECONDS: z.coerce.number().int().positive().default(15 * 60),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().positive().default(30),
   APP_VERSION: z.string().default("dev"),
+  // A rotina de Logística vive em automacoes-hungara. Estas duas são OPCIONAIS de
+  // propósito: `env()` roda no cold start e derruba a API inteira se algo obrigatório
+  // faltar. Um segredo esquecido não pode tirar o portal do ar por causa de um módulo
+  // — quem reclama é a rota da Logística, com mensagem que diz o que falta.
+  LOGISTICA_URL: z
+    .string()
+    .optional()
+    .transform((v) => (v ? v : undefined)),
+  LOGISTICA_API_KEY: z
+    .string()
+    .optional()
+    .transform((v) => (v ? v : undefined)),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
