@@ -16,8 +16,8 @@ export function AppShell() {
       <header className="bg-brand-red text-brand-cream shadow-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6">
           <Link to="/" className="flex items-center gap-3">
-            <img src="/brand/logo-hungara.png" alt="Hungara Lanches" className="h-11 w-11 rounded-full bg-brand-cream object-contain p-0.5" />
-            <span className="font-display text-2xl tracking-wide">Hub Hungara</span>
+            <img src="/brand/favicon-512.png" alt="Hungara Lanches" className="h-11 w-11 rounded-full bg-brand-cream object-cover" />
+            <span className="relative top-[3px] font-display text-2xl leading-none tracking-wide">Hub Hungara</span>
           </Link>
 
           <nav className="ml-4 hidden items-center gap-1 sm:flex">
